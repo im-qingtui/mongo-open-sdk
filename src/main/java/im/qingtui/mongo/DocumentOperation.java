@@ -1,6 +1,11 @@
 package im.qingtui.mongo;
 
+import static com.mongodb.client.model.Accumulators.sum;
+import static com.mongodb.client.model.Aggregates.group;
+import static com.mongodb.client.model.Aggregates.match;
+import static com.mongodb.client.model.Aggregates.unwind;
 import static com.mongodb.client.model.Filters.eq;
+import static im.qingtui.mongo.MongoOperator.getDocumentKey;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -247,6 +252,30 @@ public class DocumentOperation {
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
         MongoCursor<Document> aggregate = collection.aggregate(pipeline).iterator();
         return toList(aggregate);
+    }
+
+    /**
+     * 聚合统计某个属性的值总共出现的次数
+     *
+     * @param collectionName 集合名称
+     * @param filter 查询条件
+     * @param fieldName 属性名
+     * @param unwind 是否平铺属性值，只对于属性值为数组时有效
+     */
+    public static List<Document> aggregateCount(String collectionName, Bson filter, String fieldName, boolean unwind) {
+        List<Bson> pipeline = new ArrayList<>();
+
+        if (filter != null) {
+            pipeline.add(match(filter));
+        }
+
+        if (unwind) {
+            pipeline.add(unwind(getDocumentKey(fieldName)));
+        }
+
+        pipeline.add(group(getDocumentKey(fieldName), sum(MongoOperator.COUNT, 1)));
+
+        return aggregate(collectionName, pipeline);
     }
 
     /**

@@ -153,6 +153,14 @@ public class DocumentOperationTest {
     }
 
     @Test
+    public void aggregateField() {
+        List<Document> aggregate = DocumentOperation.aggregateCount(collectionName, eq("address", "重庆蔡家"), "age", false);
+        Assert.assertNotNull(aggregate);
+        System.out.println(aggregate);
+        Assert.assertTrue(aggregate.size() > 0);
+    }
+
+    @Test
     public void countDocuments() {
         long l = DocumentOperation.countDocuments(collectionName, eq("name", "段誉"));
         Assert.assertTrue(l > 0);

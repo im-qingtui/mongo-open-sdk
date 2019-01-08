@@ -18,6 +18,11 @@ public class MongoOperator {
     public static final String MONGO_ID_KEY = "_id";
 
     /**
+     * mongodb的统计列
+     */
+    public static final String COUNT = "count";
+
+    /**
      * 获取文档属性的变量
      *
      * @param documentKey 文档key
