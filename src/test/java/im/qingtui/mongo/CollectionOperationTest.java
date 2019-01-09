@@ -13,6 +13,15 @@ public class CollectionOperationTest {
     }
 
     @Test
+    public void createCollectionMany() {
+        int total = 5000;
+        for (int i = 0; i < total; i++) {
+            System.out.println(i);
+            CollectionOperation.createCollection("testMany" + i);
+        }
+    }
+
+    @Test
     public void getCollection() {
         MongoCollection<Document> test = CollectionOperation.getCollection("students");
         Assert.assertNotNull(test);
@@ -20,6 +29,9 @@ public class CollectionOperationTest {
 
     @Test
     public void drop() {
-        CollectionOperation.drop("test");
+        int total = 5000;
+        for (int i = 0; i < total; i++) {
+        CollectionOperation.drop("testMany" + i);
+        }
     }
 }

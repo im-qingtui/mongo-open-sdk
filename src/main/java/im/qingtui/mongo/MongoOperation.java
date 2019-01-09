@@ -1,5 +1,7 @@
 package im.qingtui.mongo;
 
+import com.ctrip.framework.apollo.Config;
+import com.ctrip.framework.apollo.ConfigService;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
@@ -12,11 +14,30 @@ import java.util.Properties;
  */
 public class MongoOperation {
 
+    private static String MONGO_DATABASE = "mongo.database";
+    private static String MONGO_URL = "mongo.url";
     private static Properties properties = new Properties();
 
     private static volatile MongoClient mongoClient;
 
     static {
+        initProperty();
+    }
+
+    private static void initProperty() {
+        Config config = ConfigService.getAppConfig();
+        String mongoDatabase = config.getProperty(MONGO_DATABASE, "");
+        String mongoUrl = config.getProperty(MONGO_URL, "");
+        if ("".equals(mongoDatabase) || "".equals(mongoUrl)) {
+            loadPropertyFromConfig();
+        } else {
+            properties.put(MONGO_DATABASE, mongoDatabase);
+            properties.put(MONGO_URL, mongoUrl);
+        }
+    }
+
+
+    private static void loadPropertyFromConfig() {
         try {
             InputStream mongodbConfig = MongoOperation.class.getClassLoader().getResourceAsStream("mongodb.properties");
             if (mongodbConfig == null) {

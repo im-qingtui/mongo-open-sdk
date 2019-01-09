@@ -18,6 +18,11 @@ public class MongoOperator {
     public static final String MONGO_ID_KEY = "_id";
 
     /**
+     * id
+     */
+    public static final String ID_KEY = "id";
+
+    /**
      * mongodb的统计列
      */
     public static final String COUNT = "count";

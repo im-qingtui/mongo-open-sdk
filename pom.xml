@@ -25,6 +25,8 @@
     <org.projectlombok.version>1.16.18</org.projectlombok.version>
     <junit.version>4.12</junit.version>
     <org.testng.version>6.3.1</org.testng.version>
+    <fastjson.version>1.2.7</fastjson.version>
+    <apollo.version>0.9.2</apollo.version>
   </properties>
 
   <dependencies>
@@ -54,6 +56,17 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>fastjson</artifactId>
+      <version>${fastjson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.ctrip.framework.apollo</groupId>
+      <artifactId>apollo-client</artifactId>
+      <version>${apollo.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,8 +42,8 @@ public class DocumentOperationTest {
 
     @Test
     public void findByNullId() {
-        Document document = DocumentOperation.findById(collectionName, "5c20cb04b4ce27dac78c5911");
-        Assert.assertNull(document);
+        Document document = DocumentOperation.findById(collectionName, "5c2095b430439274c4d04ae2");
+        Assert.assertNotNull(document);
     }
 
     @Test
@@ -106,7 +107,7 @@ public class DocumentOperationTest {
         pageable.setPage(1);
         pageable.setSize(5);
         pageable.setOrders(Order.desc("age"));
-        PageResult pageResult = DocumentOperation.find(collectionName, eq("name", "段誉"), pageable, include("name"));
+        PageResult pageResult = DocumentOperation.find(collectionName, eq("address", "重庆蔡家"), pageable, include("name"));
         System.out.println(pageResult);
         Assert.assertNotNull(pageResult);
         Assert.assertTrue(pageResult.getList().size() > 0);
@@ -114,7 +115,7 @@ public class DocumentOperationTest {
 
     @Test
     public void find3() {
-        Document document = DocumentOperation.findOne(collectionName, eq("name", "段誉"));
+        Document document = DocumentOperation.findOne(collectionName, eq("address", "重庆蔡家"));
         Assert.assertNotNull(document);
     }
 
@@ -126,7 +127,7 @@ public class DocumentOperationTest {
 
     @Test
     public void findAndSort() {
-        List<Document> document = DocumentOperation.findAndSort(collectionName, eq("name", "段誉"), Sorts.ascending("name"));
+        List<Document> document = DocumentOperation.findAndSort(collectionName, eq("address", "重庆蔡家"), Sorts.ascending("name"));
         System.out.println(document);
         Assert.assertNotNull(document);
         Assert.assertTrue(document.size() > 0);
@@ -134,7 +135,7 @@ public class DocumentOperationTest {
 
     @Test
     public void findAndProjection() {
-        List<Document> document = DocumentOperation.find(collectionName, eq("name", "段誉"), Projections.include("name"), Sorts.ascending("name"));
+        List<Document> document = DocumentOperation.find(collectionName, eq("address", "重庆蔡家"), Projections.include("name"), Sorts.ascending("name"));
         System.out.println(document);
         Assert.assertNotNull(document);
         Assert.assertTrue(document.size() > 0);
