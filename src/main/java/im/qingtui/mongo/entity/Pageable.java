@@ -30,6 +30,11 @@ public class Pageable {
         this.orders = Arrays.asList(orders);
     }
 
+    public Pageable(int page, int size) {
+        this.page = page;
+        this.size = size;
+    }
+
     public int skip() {
         return (page - 1) * size;
     }
