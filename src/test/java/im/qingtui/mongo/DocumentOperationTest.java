@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -157,7 +156,6 @@ public class DocumentOperationTest {
     public void aggregateField() {
         List<Document> aggregate = DocumentOperation.aggregateCount(collectionName, eq("address", "重庆蔡家"), "age", false);
         Assert.assertNotNull(aggregate);
-        System.out.println(aggregate);
         Assert.assertTrue(aggregate.size() > 0);
     }
 

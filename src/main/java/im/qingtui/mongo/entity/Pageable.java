@@ -21,6 +21,15 @@ public class Pageable {
     // 排序字段
     private List<Order> orders;
 
+    public Pageable() {
+    }
+
+    public Pageable(int page, int size, Order... orders) {
+        this.page = page;
+        this.size = size;
+        this.orders = Arrays.asList(orders);
+    }
+
     public int skip() {
         return (page - 1) * size;
     }
