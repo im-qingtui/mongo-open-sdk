@@ -5,6 +5,8 @@ import static com.mongodb.client.model.Aggregates.group;
 import static com.mongodb.client.model.Aggregates.match;
 import static com.mongodb.client.model.Aggregates.unwind;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.in;
+import static im.qingtui.mongo.MongoOperator.MONGO_ID_KEY;
 import static im.qingtui.mongo.MongoOperator.getDocumentKey;
 
 import com.mongodb.client.FindIterable;
@@ -306,7 +308,22 @@ public class DocumentOperation {
      * @param id 文件数据id
      */
     public static void deleteById(String collectionName, String id) {
-        deleteMany(collectionName, eq(new ObjectId(id)));
+        MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
+        collection.deleteOne(eq(new ObjectId(id)));
+    }
+
+    /**
+     * 通过文档数据id删除文档
+     *
+     * @param collectionName 集合名称
+     * @param ids 文件数据id
+     */
+    public static void deleteById(String collectionName, List<String> ids) {
+        List<ObjectId> objectIds = new ArrayList<>();
+        for (String id : ids) {
+            objectIds.add(new ObjectId(id));
+        }
+        deleteMany(collectionName, in(MONGO_ID_KEY, objectIds));
     }
 
     /**

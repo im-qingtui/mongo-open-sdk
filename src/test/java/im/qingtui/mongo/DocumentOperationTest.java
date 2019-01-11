@@ -178,6 +178,14 @@ public class DocumentOperationTest {
     }
 
     @Test
+    public void deleteByIdMany() {
+        List<String> idList = new ArrayList<>();
+        idList.add("5c22e40c30439283fafa1156");
+        idList.add("5c24342ee192046ba50ce306");
+        DocumentOperation.deleteById(collectionName, idList);
+    }
+
+    @Test
     public void deleteMany() {
         DocumentOperation.deleteMany(collectionName, eq("name", "段誉1"));
     }
