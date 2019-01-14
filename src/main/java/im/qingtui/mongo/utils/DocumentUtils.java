@@ -22,49 +22,53 @@ public final class DocumentUtils {
     /**
      * 移除 mongodb 的 "_id" 属性
      */
-    public static void removeObjectId(List<Document> documents) {
+    public static List<Document> removeObjectId(List<Document> documents) {
         for (Document document : documents) {
             document.remove(MONGO_ID_KEY);
         }
+        return documents;
     }
 
     /**
      * 移除 mongodb 的 "_id" 属性
      */
-    public static void removeObjectId(Document document) {
+    public static Document removeObjectId(Document document) {
         document.remove(MONGO_ID_KEY);
+        return document;
     }
 
     /**
      * 替换 mongodb 的 "_id" 属性为 "id"，且类型 value 类型为 String
      */
-    public static void replaceObjectId(Document document) {
-        replaceObjectId(document, ID_KEY);
+    public static Document replaceObjectId(Document document) {
+        return replaceObjectId(document, ID_KEY);
     }
 
     /**
      * 替换 mongodb 的 "_id" 属性为指定 newIdKey，且类型 value 类型为 String
      */
-    public static void replaceObjectId(Document document, String newIdKey) {
+    public static Document replaceObjectId(Document document, String newIdKey) {
         ObjectId objectId = document.getObjectId(MONGO_ID_KEY);
         document.put(newIdKey, objectId.toString());
         document.remove(MONGO_ID_KEY);
+        return document;
     }
 
     /**
      * 替换 mongodb 的 "_id" 属性为 "id"，且类型 value 类型为 String
      */
-    public static void replaceObjectId(List<Document> documents) {
-        replaceObjectId(documents, ID_KEY);
+    public static List<Document> replaceObjectId(List<Document> documents) {
+        return replaceObjectId(documents, ID_KEY);
     }
 
     /**
      * 替换 mongodb 的 "_id" 属性为指定 newIdKey，，且类型 value 类型为 String
      */
-    public static void replaceObjectId(List<Document> documents, String newIdKey) {
+    public static List<Document> replaceObjectId(List<Document> documents, String newIdKey) {
         for (Document document : documents) {
             replaceObjectId(document, newIdKey);
         }
+        return documents;
     }
 
     /**
