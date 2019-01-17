@@ -78,7 +78,7 @@ public class DocumentOperation {
      */
     public static List<Document> findAndSort(String collectionName, Bson filter, Bson sort) {
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
-        return toList(collection.find(filter).iterator());
+        return toList(collection.find(filter).sort(sort).iterator());
     }
 
     /**
@@ -113,6 +113,10 @@ public class DocumentOperation {
      * @param id 文档数据的id
      */
     public static Document findById(String collectionName, String id) {
+        if (!ObjectId.isValid(id)) {
+            return null;
+        }
+
         List<Document> documents = find(collectionName, eq(new ObjectId(id)));
 
         if (documents == null || documents.size() <= 0) {
@@ -130,6 +134,10 @@ public class DocumentOperation {
      * @param projection 需要投影的字段
      */
     public static Document findById(String collectionName, String id, Bson projection) {
+        if (!ObjectId.isValid(id)) {
+            return null;
+        }
+
         List<Document> documents = find(collectionName, eq(new ObjectId(id)), projection);
 
         if (documents == null || documents.size() <= 0) {
@@ -308,6 +316,10 @@ public class DocumentOperation {
      * @param id 文件数据id
      */
     public static void deleteById(String collectionName, String id) {
+        if (!ObjectId.isValid(id)) {
+            return;
+        }
+
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
         collection.deleteOne(eq(new ObjectId(id)));
     }
@@ -321,7 +333,9 @@ public class DocumentOperation {
     public static void deleteById(String collectionName, List<String> ids) {
         List<ObjectId> objectIds = new ArrayList<>();
         for (String id : ids) {
-            objectIds.add(new ObjectId(id));
+            if (ObjectId.isValid(id)) {
+                objectIds.add(new ObjectId(id));
+            }
         }
         deleteMany(collectionName, in(MONGO_ID_KEY, objectIds));
     }
