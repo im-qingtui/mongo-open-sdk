@@ -271,6 +271,7 @@ public class DocumentOperation {
      * @param filter 查询条件
      * @param fieldName 属性名
      * @param unwind 是否平铺属性值，只对于属性值为数组时有效
+     * @return {"_id" : {fieldValue}, "count" : {number}}
      */
     public static List<Document> aggregateCount(String collectionName, Bson filter, String fieldName, boolean unwind) {
         List<Bson> pipeline = new ArrayList<>();

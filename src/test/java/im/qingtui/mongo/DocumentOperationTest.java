@@ -155,6 +155,7 @@ public class DocumentOperationTest {
     @Test
     public void aggregateField() {
         List<Document> aggregate = DocumentOperation.aggregateCount(collectionName, eq("address", "重庆蔡家"), "age", false);
+        System.out.println(aggregate);
         Assert.assertNotNull(aggregate);
         Assert.assertTrue(aggregate.size() > 0);
     }
