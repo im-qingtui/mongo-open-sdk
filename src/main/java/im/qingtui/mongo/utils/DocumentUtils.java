@@ -89,4 +89,18 @@ public final class DocumentUtils {
         }
         return result;
     }
+
+    /**
+     * 将聚合函数的结果转换为document对象
+     *
+     * @param documents 待转换的集合
+     * @param fileName 列名
+     */
+    public static Document aggregateResultToDocument(List<Document> documents, String fileName) {
+        Document result = new Document();
+        for (Document document : documents) {
+            result.append(document.get(MONGO_ID_KEY).toString(), document.get(fileName));
+        }
+        return result;
+    }
 }
