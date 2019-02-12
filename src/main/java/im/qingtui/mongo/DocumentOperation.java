@@ -1,5 +1,6 @@
 package im.qingtui.mongo;
 
+import static com.mongodb.assertions.Assertions.notNull;
 import static com.mongodb.client.model.Accumulators.sum;
 import static com.mongodb.client.model.Aggregates.group;
 import static com.mongodb.client.model.Aggregates.match;
@@ -48,6 +49,7 @@ public class DocumentOperation {
      * @return 插入后文档数据集合的id
      */
     public static List<String> insertMany(String collectionName, List<Document> documents) {
+        notNull("documents", documents);
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
         collection.insertMany(documents);
 
@@ -65,6 +67,7 @@ public class DocumentOperation {
      * @param filter 查询对象
      */
     public static List<Document> find(String collectionName, Bson filter) {
+        notNull("filter", filter);
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
         return toList(collection.find(filter).iterator());
     }
@@ -77,6 +80,8 @@ public class DocumentOperation {
      * @param sort 排序规则
      */
     public static List<Document> findAndSort(String collectionName, Bson filter, Bson sort) {
+        notNull("filter", filter);
+        notNull("sort", sort);
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
         return toList(collection.find(filter).sort(sort).iterator());
     }
@@ -89,6 +94,8 @@ public class DocumentOperation {
      * @param projection 需要投影的字段
      */
     public static List<Document> find(String collectionName, Bson filter, Bson projection) {
+        notNull("filter", filter);
+        notNull("projection", projection);
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
         return toList(collection.find(filter).projection(projection).iterator());
     }
@@ -102,6 +109,9 @@ public class DocumentOperation {
      * @param sort 排序规则
      */
     public static List<Document> find(String collectionName, Bson filter, Bson projection, Bson sort) {
+        notNull("filter", filter);
+        notNull("projection", projection);
+        notNull("sort", sort);
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
         return toList(collection.find(filter).projection(projection).sort(sort).iterator());
     }
@@ -197,6 +207,7 @@ public class DocumentOperation {
      * @param projection 需要投影的字段
      */
     public static List<Document> findAll(String collectionName, Bson projection) {
+        notNull("projection", projection);
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
         return toList(collection.find().projection(projection).iterator());
     }
@@ -210,6 +221,7 @@ public class DocumentOperation {
      * @return 分页结果
      */
     public static PageResult find(String collectionName, Bson filter, Pageable pageable) {
+        notNull("pageable", pageable);
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
 
         FindIterable<Document> filterCondition = collection.find(filter)
@@ -235,6 +247,9 @@ public class DocumentOperation {
      * @return 分页结果
      */
     public static PageResult find(String collectionName, Bson filter, Pageable pageable, Bson projection) {
+        notNull("filter", filter);
+        notNull("pageable", pageable);
+        notNull("projection", projection);
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
 
         FindIterable<Document> filterCondition = collection.find(filter)
@@ -259,6 +274,7 @@ public class DocumentOperation {
      * @param pipeline 聚合条件
      */
     public static List<Document> aggregate(String collectionName, List<? extends Bson> pipeline) {
+        notNull("pipeline", pipeline);
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
         MongoCursor<Document> aggregate = collection.aggregate(pipeline).iterator();
         return toList(aggregate);
@@ -274,11 +290,34 @@ public class DocumentOperation {
      * @return {"_id" : {fieldValue}, "count" : {number}}
      */
     public static List<Document> aggregateCount(String collectionName, Bson filter, String fieldName, boolean unwind) {
+        notNull("filter", filter);
+        notNull("fieldName", fieldName);
         List<Bson> pipeline = new ArrayList<>();
 
         if (filter != null) {
             pipeline.add(match(filter));
         }
+
+        if (unwind) {
+            pipeline.add(unwind(getDocumentKey(fieldName)));
+        }
+
+        pipeline.add(group(getDocumentKey(fieldName), sum(MongoOperator.COUNT, 1)));
+
+        return aggregate(collectionName, pipeline);
+    }
+
+    /**
+     * 聚合统计某个属性的值总共出现的次数
+     *
+     * @param collectionName 集合名称
+     * @param fieldName 属性名
+     * @param unwind 是否平铺属性值，只对于属性值为数组时有效
+     * @return {"_id" : {fieldValue}, "count" : {number}}
+     */
+    public static List<Document> aggregateCount(String collectionName, String fieldName, boolean unwind) {
+        notNull("fieldName", fieldName);
+        List<Bson> pipeline = new ArrayList<>();
 
         if (unwind) {
             pipeline.add(unwind(getDocumentKey(fieldName)));
@@ -296,6 +335,7 @@ public class DocumentOperation {
      * @param filter 查询条件
      */
     public static long countDocuments(String collectionName, Bson filter) {
+        notNull("filter", filter);
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
         return collection.countDocuments(filter);
     }
@@ -332,6 +372,7 @@ public class DocumentOperation {
      * @param ids 文件数据id
      */
     public static void deleteById(String collectionName, List<String> ids) {
+        notNull("ids", ids);
         List<ObjectId> objectIds = new ArrayList<>();
         for (String id : ids) {
             if (ObjectId.isValid(id)) {
@@ -348,6 +389,7 @@ public class DocumentOperation {
      * @param filter 查询对象
      */
     public static void deleteMany(String collectionName, Bson filter) {
+        notNull("filter", filter);
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
         collection.deleteMany(filter);
     }
@@ -360,6 +402,8 @@ public class DocumentOperation {
      * @param newDocument 新文档集合对象
      */
     public static void replaceOne(String collectionName, String id, Document newDocument) {
+        notNull("id", id);
+        notNull("newDocument", newDocument);
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
         newDocument.remove(MongoOperator.MONGO_ID_KEY);
         collection.replaceOne(eq(new ObjectId(id)), newDocument);
@@ -373,6 +417,8 @@ public class DocumentOperation {
      * @param update 更新语句
      */
     public static void updateMany(String collectionName, Bson filter, Bson update) {
+        notNull("filter", filter);
+        notNull("update", update);
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
         collection.updateMany(filter, update);
     }
