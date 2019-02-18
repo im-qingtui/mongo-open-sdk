@@ -7,6 +7,7 @@ import static com.mongodb.client.model.Projections.include;
 import static com.mongodb.client.model.Updates.set;
 import static im.qingtui.mongo.MongoOperator.getDocumentKey;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import im.qingtui.mongo.entity.PageResult;
@@ -59,7 +60,26 @@ public class DocumentOperationTest {
     }
 
     @Test
+    public void findByIds() {
+        List<String> ids = new ArrayList<>();
+        ids.add("5c2095b430439274c4d04ae2");
+        ids.add("5c2087803043926d745250c2");
+        List<Document> document = DocumentOperation.findById(collectionName, ids);
+        System.out.println(document);
+        Assert.assertNotNull(document);
+    }
+
+    @Test
     public void find() {
+        BasicDBObject test = new BasicDBObject("$regex",".*");
+        List<Document> documents = DocumentOperation.find(collectionName, eq("name", test));
+        List<Document> documents2 = DocumentOperation.find(collectionName, eq("name", "2 }, { c : /.*/"));
+        Assert.assertNotNull(documents);
+        Assert.assertTrue(documents.size() > 0);
+    }
+
+    @Test
+    public void findCode() {
         List<Document> documents = DocumentOperation.find(collectionName, eq("name", "段誉1"));
         Assert.assertNotNull(documents);
         Assert.assertTrue(documents.size() > 0);

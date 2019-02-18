@@ -137,6 +137,23 @@ public class DocumentOperation {
     }
 
     /**
+     * 通过文档数据id集合获取文档集合
+     *
+     * @param collectionName 集合名称
+     * @param ids 文件数据id
+     */
+    public static List<Document> findById(String collectionName, List<String> ids) {
+        notNull("ids", ids);
+        List<ObjectId> objectIds = new ArrayList<>();
+        for (String id : ids) {
+            if (ObjectId.isValid(id)) {
+                objectIds.add(new ObjectId(id));
+            }
+        }
+        return find(collectionName, in(MONGO_ID_KEY,objectIds));
+    }
+
+    /**
      * 通过id获取文档数据
      *
      * @param collectionName 集合名称
