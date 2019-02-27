@@ -13,8 +13,8 @@ import static im.qingtui.mongo.MongoOperator.getDocumentKey;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
+import im.qingtui.mongo.entity.PageAbstract;
 import im.qingtui.mongo.entity.PageResult;
-import im.qingtui.mongo.entity.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 import org.bson.Document;
@@ -234,19 +234,19 @@ public class DocumentOperation {
      *
      * @param collectionName 集合名称
      * @param filter 查询对象
-     * @param pageable 分页对象
+     * @param page 分页对象
      * @return 分页结果
      */
-    public static PageResult find(String collectionName, Bson filter, Pageable pageable) {
-        notNull("pageable", pageable);
+    public static PageResult find(String collectionName, Bson filter, PageAbstract page) {
+        notNull("page", page);
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
 
         FindIterable<Document> filterCondition = collection.find(filter)
-            .skip(pageable.skip())
-            .limit(pageable.getSize());
+            .skip(page.skip())
+            .limit(page.getSize());
 
-        if (pageable.getOrders() != null) {
-            filterCondition.sort(pageable.getBsonOrder());
+        if (page.getOrders() != null) {
+            filterCondition.sort(page.getBsonOrder());
         }
 
         MongoCursor<Document> documents = filterCondition.iterator();
@@ -260,22 +260,22 @@ public class DocumentOperation {
      *
      * @param collectionName 集合名称
      * @param filter 查询对象
-     * @param pageable 分页对象
+     * @param page 分页对象
      * @return 分页结果
      */
-    public static PageResult find(String collectionName, Bson filter, Pageable pageable, Bson projection) {
+    public static PageResult find(String collectionName, Bson filter, PageAbstract page, Bson projection) {
         notNull("filter", filter);
-        notNull("pageable", pageable);
+        notNull("page", page);
         notNull("projection", projection);
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
 
         FindIterable<Document> filterCondition = collection.find(filter)
             .projection(projection)
-            .skip(pageable.skip())
-            .limit(pageable.getSize());
+            .skip(page.skip())
+            .limit(page.getSize());
 
-        if (pageable.getOrders() != null) {
-            filterCondition.sort(pageable.getBsonOrder());
+        if (page.getOrders() != null) {
+            filterCondition.sort(page.getBsonOrder());
         }
 
         MongoCursor<Document> documents = filterCondition.iterator();
