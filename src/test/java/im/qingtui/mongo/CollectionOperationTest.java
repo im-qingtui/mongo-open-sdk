@@ -31,7 +31,7 @@ public class CollectionOperationTest {
     public void drop() {
         int total = 5000;
         for (int i = 0; i < total; i++) {
-        CollectionOperation.drop("testMany" + i);
+            CollectionOperation.drop("testMany" + i);
         }
     }
 }

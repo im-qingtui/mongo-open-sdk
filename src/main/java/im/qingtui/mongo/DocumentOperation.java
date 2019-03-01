@@ -150,7 +150,7 @@ public class DocumentOperation {
                 objectIds.add(new ObjectId(id));
             }
         }
-        return find(collectionName, in(MONGO_ID_KEY,objectIds));
+        return find(collectionName, in(MONGO_ID_KEY, objectIds));
     }
 
     /**
@@ -238,21 +238,27 @@ public class DocumentOperation {
      * @return 分页结果
      */
     public static PageResult find(String collectionName, Bson filter, PageAbstract page) {
+        notNull("filter", filter);
         notNull("page", page);
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
 
-        FindIterable<Document> filterCondition = collection.find(filter)
-            .skip(page.skip())
-            .limit(page.getSize());
-
-        if (page.getOrders() != null) {
-            filterCondition.sort(page.getBsonOrder());
-        }
-
-        MongoCursor<Document> documents = filterCondition.iterator();
+        // 获取总数量
         long total = countDocuments(collectionName, filter);
 
-        return new PageResult(toList(documents), total);
+        // 获取分页数据
+        List<Document> documents = new ArrayList<>();
+        if (page.getSize() != 0) {
+            FindIterable<Document> filterCondition = collection.find(filter)
+                .skip(page.skip())
+                .limit(page.getSize());
+            if (page.getOrders() != null) {
+                filterCondition.sort(page.getBsonOrder());
+            }
+
+            documents = toList(filterCondition.iterator());
+        }
+
+        return new PageResult(documents, total);
     }
 
     /**
@@ -261,27 +267,33 @@ public class DocumentOperation {
      * @param collectionName 集合名称
      * @param filter 查询对象
      * @param page 分页对象
+     * @param projection 需要投影的字段
      * @return 分页结果
      */
     public static PageResult find(String collectionName, Bson filter, PageAbstract page, Bson projection) {
         notNull("filter", filter);
         notNull("page", page);
         notNull("projection", projection);
-        MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
 
-        FindIterable<Document> filterCondition = collection.find(filter)
-            .projection(projection)
-            .skip(page.skip())
-            .limit(page.getSize());
-
-        if (page.getOrders() != null) {
-            filterCondition.sort(page.getBsonOrder());
-        }
-
-        MongoCursor<Document> documents = filterCondition.iterator();
+        // 获取总数量
         long total = countDocuments(collectionName, filter);
 
-        return new PageResult(toList(documents), total);
+        // 获取分页数据
+        List<Document> documents = new ArrayList<>();
+
+        if (page.getSize() != 0) {
+            MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
+            FindIterable<Document> filterCondition = collection.find(filter)
+                .projection(projection)
+                .skip(page.skip())
+                .limit(page.getSize());
+            if (page.getOrders() != null) {
+                filterCondition.sort(page.getBsonOrder());
+            }
+            documents = toList(filterCondition.iterator());
+        }
+
+        return new PageResult(documents, total);
     }
 
     /**

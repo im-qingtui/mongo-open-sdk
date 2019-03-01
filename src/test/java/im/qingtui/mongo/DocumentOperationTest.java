@@ -3,27 +3,31 @@ package im.qingtui.mongo;
 import static com.mongodb.client.model.Accumulators.avg;
 import static com.mongodb.client.model.Aggregates.group;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.in;
 import static com.mongodb.client.model.Projections.include;
+import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 import static im.qingtui.mongo.MongoOperator.getDocumentKey;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
+import im.qingtui.mongo.entity.OffsetPageable;
+import im.qingtui.mongo.entity.Order;
 import im.qingtui.mongo.entity.PageResult;
 import im.qingtui.mongo.entity.Pageable;
-import im.qingtui.mongo.entity.Pageable.Order;
 import java.util.ArrayList;
 import java.util.List;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class DocumentOperationTest {
 
     String collectionName = "students";
-    Document document = new Document("name", "段誉").append("sex", "男").append("age", 26);
+    Document document = new Document("name", "段誉").append("sex", "男").append("age", 26).append("test",null);
 
     @Test
     public void insertOne() {
@@ -71,7 +75,7 @@ public class DocumentOperationTest {
 
     @Test
     public void find() {
-        BasicDBObject test = new BasicDBObject("$regex",".*");
+        BasicDBObject test = new BasicDBObject("$regex", ".*");
         List<Document> documents = DocumentOperation.find(collectionName, eq("name", test));
         List<Document> documents2 = DocumentOperation.find(collectionName, eq("name", "2 }, { c : /.*/"));
         Assert.assertNotNull(documents);
@@ -121,6 +125,18 @@ public class DocumentOperationTest {
     }
 
     @Test
+    public void findOffset() {
+        OffsetPageable pageable = new OffsetPageable();
+        pageable.setOffset(1);
+        pageable.setSize(0);
+        pageable.setOrders(Order.desc("age"));
+        PageResult pageResult = DocumentOperation.find(collectionName, new Document(), pageable);
+        System.out.println(pageResult);
+        Assert.assertNotNull(pageResult);
+        Assert.assertTrue(pageResult.getList().size() > 0);
+    }
+
+    @Test
     public void find2Projection() {
         Pageable pageable = new Pageable();
         pageable.setPage(1);
@@ -154,7 +170,7 @@ public class DocumentOperationTest {
 
     @Test
     public void findAndProjection() {
-        List<Document> document = DocumentOperation.find(collectionName, eq("address", "重庆蔡家"), Projections.include("name"), Sorts.ascending("name"));
+        List<Document> document = DocumentOperation.find(collectionName, eq("address", "重庆蔡家"), include("name"), Sorts.ascending("name"));
         System.out.println(document);
         Assert.assertNotNull(document);
         Assert.assertTrue(document.size() > 0);
@@ -219,6 +235,6 @@ public class DocumentOperationTest {
 
     @Test
     public void updateMany() {
-        DocumentOperation.updateMany(collectionName, eq("name", "段誉"), set("name", "段誉1"));
+        DocumentOperation.updateMany(collectionName, eq(new ObjectId("5c6cfd8c787de599c98d7678")), combine(set("name2", "段誉888"),set("name", "段誉88")));
     }
 }
