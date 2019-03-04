@@ -99,7 +99,10 @@ public final class DocumentUtils {
     public static Document aggregateResultToDocument(List<Document> documents, String fileName) {
         Document result = new Document();
         for (Document document : documents) {
-            result.append(document.get(MONGO_ID_KEY).toString(), document.get(fileName));
+            Object key = document.get(MONGO_ID_KEY);
+            if (key != null) {
+                result.append(key.toString(), document.get(fileName));
+            }
         }
         return result;
     }
