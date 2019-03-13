@@ -27,7 +27,7 @@ import org.junit.Test;
 public class DocumentOperationTest {
 
     String collectionName = "students";
-    Document document = new Document("name", "段誉").append("sex", "男").append("age", 26).append("test",null);
+    Document document = new Document("name", "段誉").append("sex", "男").append("age", 26).append("test", null);
 
     @Test
     public void insertOne() {
@@ -59,7 +59,10 @@ public class DocumentOperationTest {
 
     @Test
     public void findById() {
-        Document document = DocumentOperation.findById(collectionName, "5c2095b430439274c4d04ae2");
+        ObjectId objectId1 = new ObjectId("5c6cfd8c787de599c98d7678");
+        ObjectId objectId2 = new ObjectId("5c739557bafccc94998073e4");
+        ObjectId objectId3 = new ObjectId("5c739557bafccc94998073e6");
+        List<Document> document = DocumentOperation.find(collectionName, in("_id", objectId1, objectId2, objectId3));
         Assert.assertNotNull(document);
     }
 
@@ -235,6 +238,6 @@ public class DocumentOperationTest {
 
     @Test
     public void updateMany() {
-        DocumentOperation.updateMany(collectionName, eq(new ObjectId("5c6cfd8c787de599c98d7678")), combine(set("name2", "段誉888"),set("name", "段誉88")));
+        DocumentOperation.updateMany(collectionName, eq(new ObjectId("5c6cfd8c787de599c98d7678")), combine(set("name2", "段誉888"), set("name", "段誉88")));
     }
 }

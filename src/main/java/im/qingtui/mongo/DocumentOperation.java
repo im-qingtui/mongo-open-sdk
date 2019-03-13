@@ -13,6 +13,7 @@ import static im.qingtui.mongo.MongoOperator.getDocumentKey;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.UpdateOptions;
 import im.qingtui.mongo.entity.PageAbstract;
 import im.qingtui.mongo.entity.PageResult;
 import java.util.ArrayList;
@@ -439,6 +440,51 @@ public class DocumentOperation {
     }
 
     /**
+     * 替换文档集合内的数据
+     *
+     * @param collectionName 集合名称
+     * @param filter 查询对象
+     * @param newDocument 新文档集合对象
+     */
+    public static void replaceOne(String collectionName, Bson filter, Document newDocument) {
+        notNull("filter", filter);
+        notNull("newDocument", newDocument);
+        MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
+        newDocument.remove(MongoOperator.MONGO_ID_KEY);
+        collection.replaceOne(filter, newDocument);
+    }
+
+    /**
+     * 更新文档集合内的数据
+     *
+     * @param collectionName 集合名称
+     * @param filter 查询对象
+     * @param update 更新语句
+     */
+    public static void updateOne(String collectionName, Bson filter, Bson update) {
+        notNull("filter", filter);
+        notNull("update", update);
+        MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
+        collection.updateOne(filter, update);
+    }
+
+    /**
+     * 更新文档集合内的数据
+     *
+     * @param collectionName 集合名称
+     * @param filter 查询对象
+     * @param update 更新语句
+     * @param updateOptions 设置更新配置
+     */
+    public static void updateOne(String collectionName, Bson filter, Bson update, UpdateOptions updateOptions) {
+        notNull("filter", filter);
+        notNull("update", update);
+        notNull("updateOptions", updateOptions);
+        MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
+        collection.updateOne(filter, update, updateOptions);
+    }
+
+    /**
      * 更新文档集合内的数据
      *
      * @param collectionName 集合名称
@@ -450,6 +496,22 @@ public class DocumentOperation {
         notNull("update", update);
         MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
         collection.updateMany(filter, update);
+    }
+
+    /**
+     * 更新文档集合内的数据
+     *
+     * @param collectionName 集合名称
+     * @param filter 查询对象
+     * @param update 更新语句
+     * @param updateOptions 设置更新配置
+     */
+    public static void updateMany(String collectionName, Bson filter, Bson update, UpdateOptions updateOptions) {
+        notNull("filter", filter);
+        notNull("update", update);
+        notNull("updateOptions", updateOptions);
+        MongoCollection<Document> collection = CollectionOperation.getCollection(collectionName);
+        collection.updateMany(filter, update, updateOptions);
     }
 
     private static List<Document> toList(MongoCursor<Document> mongoCursor) {
