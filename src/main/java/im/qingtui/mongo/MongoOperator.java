@@ -32,7 +32,7 @@ public class MongoOperator {
      *
      * @param documentKey 文档key
      */
-    public static String getDocumentKey(String documentKey) {
+    public static String getFieldKey(String documentKey) {
         return MongoOperator.SYMBOL + documentKey;
     }
 }
