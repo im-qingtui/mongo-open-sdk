@@ -8,7 +8,7 @@ import static com.mongodb.client.model.Aggregates.unwind;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.in;
 import static im.qingtui.mongo.MongoOperator.MONGO_ID_KEY;
-import static im.qingtui.mongo.MongoOperator.getDocumentKey;
+import static im.qingtui.mongo.MongoOperator.getFieldKey;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -329,10 +329,10 @@ public class DocumentOperation {
         }
 
         if (unwind) {
-            pipeline.add(unwind(getDocumentKey(fieldName)));
+            pipeline.add(unwind(getFieldKey(fieldName)));
         }
 
-        pipeline.add(group(getDocumentKey(fieldName), sum(MongoOperator.COUNT, 1)));
+        pipeline.add(group(getFieldKey(fieldName), sum(MongoOperator.COUNT, 1)));
 
         return aggregate(collectionName, pipeline);
     }
@@ -350,10 +350,10 @@ public class DocumentOperation {
         List<Bson> pipeline = new ArrayList<>();
 
         if (unwind) {
-            pipeline.add(unwind(getDocumentKey(fieldName)));
+            pipeline.add(unwind(getFieldKey(fieldName)));
         }
 
-        pipeline.add(group(getDocumentKey(fieldName), sum(MongoOperator.COUNT, 1)));
+        pipeline.add(group(getFieldKey(fieldName), sum(MongoOperator.COUNT, 1)));
 
         return aggregate(collectionName, pipeline);
     }

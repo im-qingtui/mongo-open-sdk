@@ -4,13 +4,12 @@ import static com.mongodb.client.model.Accumulators.avg;
 import static com.mongodb.client.model.Accumulators.max;
 import static com.mongodb.client.model.Aggregates.group;
 import static com.mongodb.client.model.Aggregates.match;
-import static com.mongodb.client.model.Aggregates.project;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.in;
 import static com.mongodb.client.model.Projections.include;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
-import static im.qingtui.mongo.MongoOperator.getDocumentKey;
+import static im.qingtui.mongo.MongoOperator.getFieldKey;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Projections;
@@ -185,7 +184,7 @@ public class DocumentOperationTest {
     @Test
     public void aggregate() {
         List<Bson> pip = new ArrayList<Bson>();
-        Bson group = group(getDocumentKey("age"), avg("age", getDocumentKey("age")));
+        Bson group = group(getFieldKey("age"), avg("age", getFieldKey("age")));
         pip.add(group);
 
         List<Document> aggregate = DocumentOperation.aggregate(collectionName, pip);
