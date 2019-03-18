@@ -1,7 +1,10 @@
 package im.qingtui.mongo;
 
 import static com.mongodb.client.model.Accumulators.avg;
+import static com.mongodb.client.model.Accumulators.max;
 import static com.mongodb.client.model.Aggregates.group;
+import static com.mongodb.client.model.Aggregates.match;
+import static com.mongodb.client.model.Aggregates.project;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.in;
 import static com.mongodb.client.model.Projections.include;
@@ -245,5 +248,17 @@ public class DocumentOperationTest {
     @Test
     public void updateMany() {
         DocumentOperation.updateMany(collectionName, eq(new ObjectId("5c6cfd8c787de599c98d7678")), combine(set("name2", "段誉888"), set("name", "段誉88")));
+    }
+
+    @Test
+    public void updateMany2() {
+        List<Bson> pipeline = new ArrayList<>();
+        pipeline.add(match(eq("a", 1)));
+        pipeline.add(group("$m"
+            + "", max("m", "$testn")));
+//        pipeline.add(project(include("testn", "a")));
+
+        List<Document> aggregate = DocumentOperation.aggregate(collectionName, pipeline);
+        System.out.println(aggregate);
     }
 }
