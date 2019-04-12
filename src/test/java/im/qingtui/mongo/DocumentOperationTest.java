@@ -2,16 +2,23 @@ package im.qingtui.mongo;
 
 import static com.mongodb.client.model.Accumulators.avg;
 import static com.mongodb.client.model.Accumulators.max;
+import static com.mongodb.client.model.Aggregates.addFields;
 import static com.mongodb.client.model.Aggregates.group;
+import static com.mongodb.client.model.Aggregates.lookup;
 import static com.mongodb.client.model.Aggregates.match;
+import static com.mongodb.client.model.Aggregates.skip;
+import static com.mongodb.client.model.Aggregates.unwind;
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.in;
+import static com.mongodb.client.model.Filters.or;
 import static com.mongodb.client.model.Projections.include;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 import static im.qingtui.mongo.MongoOperator.getFieldKey;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.client.model.Field;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import im.qingtui.mongo.entity.OffsetPageable;
@@ -22,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.json.Converter;
 import org.bson.types.ObjectId;
 import org.junit.Assert;
 import org.junit.Test;
@@ -89,7 +97,9 @@ public class DocumentOperationTest {
 
     @Test
     public void findCode() {
-        List<Document> documents = DocumentOperation.find(collectionName, eq("name", "段誉1"));
+        List<Bson> list = new ArrayList<>();
+        list.add(eq("name", "段誉"));
+        List<Document> documents = DocumentOperation.find(collectionName, and(list));
         Assert.assertNotNull(documents);
         Assert.assertTrue(documents.size() > 0);
     }
@@ -246,7 +256,7 @@ public class DocumentOperationTest {
 
     @Test
     public void updateMany() {
-        DocumentOperation.updateMany(collectionName, eq(new ObjectId("5c6cfd8c787de599c98d7678")), combine(set("name2", "段誉888"), set("name", "段誉88")));
+        DocumentOperation.updateMany(collectionName, eq(new ObjectId("5c6cfd8c787de599c98d7678")), combine(set("name2", "段誉888"), set("name6", "段誉88")));
     }
 
     @Test
@@ -258,6 +268,35 @@ public class DocumentOperationTest {
 //        pipeline.add(project(include("testn", "a")));
 
         List<Document> aggregate = DocumentOperation.aggregate(collectionName, pipeline);
+        System.out.println(aggregate);
+    }
+
+    @Test
+    public void aggregate2() {
+        List<Bson> pipeline = new ArrayList<>();
+        pipeline.add(match(eq("name", "段誉")));
+
+        BasicDBObject basicDBObject = new BasicDBObject();
+        basicDBObject.put("$toString",getFieldKey("_id"));
+        pipeline.add(addFields(new Field("id", basicDBObject)));
+
+        pipeline.add(lookup("students.book", "id", "student_id", "books"));
+        pipeline.add(unwind(getFieldKey("books")));
+
+        List<Document> aggregate = DocumentOperation.aggregate("students", pipeline);
+        System.out.println(aggregate);
+    }
+
+    @Test
+    public void aggregate3() {
+        List<Bson> pipeline = new ArrayList<>();
+        pipeline.add(match(eq("aid", "xxx")));
+
+        pipeline.add(lookup("media", "mongoDBId", "_id", "my_media"));
+        pipeline.add(unwind(getFieldKey("my_media")));
+        pipeline.add(skip(10));
+
+        List<Document> aggregate = DocumentOperation.aggregate("interest", pipeline);
         System.out.println(aggregate);
     }
 }

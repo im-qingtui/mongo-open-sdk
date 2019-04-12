@@ -490,6 +490,7 @@ public class DocumentOperation {
      * @param collectionName 集合名称
      * @param filter 查询对象
      * @param update 更新语句
+     * @see com.mongodb.client.model.Updates
      */
     public static void updateMany(String collectionName, Bson filter, Bson update) {
         notNull("filter", filter);

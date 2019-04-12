@@ -6,7 +6,7 @@
 
   <groupId>im.qingtui.business</groupId>
   <artifactId>mongo-sdk</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.3-SNAPSHOT</version>
 
   <distributionManagement>
     <repository>
